@@ -1,0 +1,62 @@
+﻿@model SEGISweb.Models.LoginModel
+@{
+    ViewBag.Title = "Index";
+}
+
+
+@{
+    Layout = null;
+}
+
+
+
+
+<!DOCTYPE html>
+<meta name="viewport" content="width=device-width, initial-scale=1">
+
+
+<head>
+    <meta charset="utf-8">
+    <title>تسجيل الدخول </title>
+    <link href="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css" rel="stylesheet" id="bootstrap-css">
+    <script src="//maxcdn.bootstrapcdn.com/bootstrap/4.0.0/js/bootstrap.min.js"></script>
+    <script src="//cdnjs.cloudflare.com/ajax/libs/jquery/3.2.1/jquery.min.js"></script>
+
+    <link href="~/Content/MyStyle.css" rel="stylesheet" />
+    <link href="~/Content/Style.css" rel="stylesheet" />
+</head>
+
+
+<!------ Include the above in your HEAD tag ---------->
+<div class="wrapper fadeInDown">
+    <div id="formContent">
+        <!-- Tabs Titles -->
+        <!-- Icon -->
+        <div class="fadeIn first  Style Style">
+            <img src="http://danielzawadzki.com/codepen/01/icon.svg" id="icon" alt="User Icon" />
+        </div>
+        <!-- Login Form -->
+        @using (Html.BeginForm())
+        {
+            @Html.AntiForgeryToken()
+
+            @Html.ValidationSummary(true, null, new { @class = "alert alert-danger" })
+
+        <form >
+
+            @Html.TextBoxFor(model => model.Username, new { @class = "fadeIn second", @placeholder = "اسم المستخدم", @autofocus = "autofocus" })
+            @Html.TextBoxFor(model => model.Password, new { @class = "fadeIn third", @placeholder = "كلمه السر " })
+            @Html.CheckBoxFor(model => model.RememberMe, new { @class = "custom-control-input", @id = "customCheck1" })
+            @*<input type="text" id="login" class="fadeIn second" name="login" placeholder="login">*@
+            @*<input type="text" id="password" class="fadeIn third" name="login" placeholder="password">*@
+            <input type="submit" class="fadeIn fourth Style" value="تسجيل الدخول" >
+        </form>
+
+        }
+        <!-- Remind Passowrd -->
+        <div id="formFooter">
+            <a class="underlineHover" href="#">Forgot Password?</a>
+        </div>
+    </div>
+</div>
+
