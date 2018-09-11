@@ -1,4 +1,4 @@
-namespace ModelsData.FrameWork
+namespace ModelsData.Framework
 {
     using System;
     using System.Data.Entity;

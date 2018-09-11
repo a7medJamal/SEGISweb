@@ -49,9 +49,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="AccountModel.cs" />
-    <Compile Include="FrameWork\SEDbContext.cs" />
-    <Compile Include="FrameWork\tblUser.cs" />
+    <Compile Include="DataAcessLayer\AccountModel.cs" />
+    <Compile Include="Framework\SEDbContext.cs" />
+    <Compile Include="Framework\tblUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

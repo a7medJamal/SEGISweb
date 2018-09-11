@@ -39,19 +39,31 @@
         @using (Html.BeginForm())
         {
             @Html.AntiForgeryToken()
+            <br />
+            @*@Html.ValidationSummary(true, null, new { @class = "alert alert-danger" })*@
+            @Html.ValidationSummary(false, "", new { @class = "text-danger" },"")
 
-            @Html.ValidationSummary(true, null, new { @class = "alert alert-danger" })
+            <form>
 
-        <form >
 
-            @Html.TextBoxFor(model => model.Username, new { @class = "fadeIn second", @placeholder = "اسم المستخدم", @autofocus = "autofocus" })
-            @Html.TextBoxFor(model => model.Password, new { @class = "fadeIn third", @placeholder = "كلمه السر " })
-            @Html.CheckBoxFor(model => model.RememberMe, new { @class = "custom-control-input" })
+                @Html.TextBoxFor(model => model.Username, new { @class = "fadeIn second", @placeholder = "اسم المستخدم", @autofocus = "autofocus" })
 
-            @*<input type="text" id="login" class="fadeIn second" name="login" placeholder="login">*@
-            @*<input type="text" id="password" class="fadeIn third" name="login" placeholder="password">*@
-            <input type="submit" class="fadeIn fourth Style" value="تسجيل الدخول" >
-        </form>
+                @*@Html.ValidationMessageFor(model => model.Username, "", new { @class = "text-danger" })*@
+
+                @Html.TextBoxFor(model => model.Password, new { @class = "fadeIn third", @placeholder = "كلمه السر " })
+                <br />
+                <br />
+                <label class="fadeIn second">تذكرنـى </label>
+                @Html.CheckBoxFor(model => model.RememberMe, new { @class = "input-group-addon" })
+
+                <br />
+                <br />
+                @*<input type="text" id="login" class="fadeIn second" name="login" placeholder="login">*@
+                @*<input type="text" id="password" class="fadeIn third" name="login" placeholder="password">*@
+
+
+                <input type="submit" class="fadeIn fourth Style" value="تسجيل الدخول">
+            </form>
 
         }
         <!-- Remind Passowrd -->

@@ -1,11 +1,12 @@
 ﻿using ModelsData;
-using SEGISweb.Code;
+using SEGISweb.Common;
 using SEGISweb.Models;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 using System.Web.Mvc;
+using System.Web.Security;
 
 namespace SEGISweb.Controllers
 {
@@ -22,17 +23,48 @@ namespace SEGISweb.Controllers
         [ValidateAntiForgeryToken]
         public ActionResult Index(LoginModel model)
         {
-            var result = new AccountModel().Login(model.Username, model.Password);
-            if(result && ModelState.IsValid)
+
+            if (ModelState.IsValid)
             {
-                SessionHelper.setSession(new UserSession() { UserName = model.Username });
-                RedirectToAction("Admin","Index","Home");
+                var dataAcesslayer = new AccountModel();
+                var result = dataAcesslayer.Login(model.Username, Encryptor.MD5Hash(model.Password));
+                if (result == 1)
+                {
+                    var user = dataAcesslayer.GetById(model.Username);
+                    var usersession = new UserLogin();
+                    usersession.UserName = user.UserName;
+                    usersession.UserID = user.ID;
+                    Session.Add(CommonConstants.User_Session, usersession);
+                    return RedirectToAction("Home", "Admin", "Index");
+                }
+                else if (result == 0)
+                {
+                    ModelState.AddModelError("", " اسم المستخدم غير صحيح");
+
+                }
+                else if (result == -1)
+                {
+                    ModelState.AddModelError("", "هذا المستخدم غير مسموح له بالدخول");
+
+                }
+                else if (result == -2)
+                {
+                    ModelState.AddModelError("", "كلمه المرور خطأ");
+
+                }
+
+                else
+                {
+                    ModelState.AddModelError("", "كلمه السر او اسم المستخدم غير صحيح");
+
+                }
             }
-            else
-            {
-                ModelState.AddModelError("خطأ","لم يتم تسجيل الدخول");
-            }
-            return View(model);
+            return View("Index");
+        }
+        public ActionResult Logout()
+        {
+            FormsAuthentication.SignOut();
+            return RedirectToAction("Index", "LogIn");
         }
     }
 }

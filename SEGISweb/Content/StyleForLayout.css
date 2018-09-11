@@ -1,0 +1,11 @@
+﻿.layoutStyle
+{
+    font-size:18px
+}
+
+.ColorStyle {
+    font-style: italic;
+    color: brown;
+    background-color:black;
+    font-size: 23px
+}

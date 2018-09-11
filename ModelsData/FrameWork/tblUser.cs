@@ -1,4 +1,4 @@
-﻿namespace ModelsData.FrameWork
+namespace ModelsData.Framework
 {
     using System;
     using System.Collections.Generic;
@@ -8,7 +8,9 @@
 
     public partial class tblUser
     {
-        [Key]
+        public long ID { get; set; }
+
+        [Required]
         [StringLength(20)]
         public string UserName { get; set; }
 
@@ -20,5 +22,13 @@
 
         [StringLength(30)]
         public string UserType { get; set; }
+
+        [StringLength(50)]
+        public string Email { get; set; }
+
+        [StringLength(50)]
+        public string Phone { get; set; }
+
+        public bool? Status { get; set; }
     }
 }

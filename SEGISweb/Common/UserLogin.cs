@@ -3,11 +3,12 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Web;
 
-namespace SEGISweb.Code
+namespace SEGISweb
 {
     [Serializable]
-    public class UserSession
+    public class UserLogin
     {
+        public long UserID { set; get; }
         public string UserName { set; get; }
     }
 }
