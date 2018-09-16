@@ -1,0 +1,472 @@
+﻿<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
+    <title>Measurement in 3D - 4.8</title>
+
+    <style>
+        html,
+        body,
+        #viewDiv {
+            padding: 0;
+            margin: 0;
+            height: 100%;
+            width: 100%;
+        }
+
+        #topbar {
+            background: #fff;
+            padding: 10px;
+        }
+
+        .action-button {
+            font-size: 16px;
+            background-color: transparent;
+            border: 1px solid #D3D3D3;
+            color: #6e6e6e;
+            height: 32px;
+            width: 32px;
+            text-align: center;
+            box-shadow: 0 0 1px rgba(0, 0, 0, 0.3);
+        }
+
+            .action-button:hover,
+            .action-button:focus {
+                background: #0079c1;
+                color: #e4e4e4;
+            }
+
+        .active {
+            background: #0079c1;
+            color: #e4e4e4;
+        }
+    </style>
+
+    <link rel="stylesheet" href="https://js.arcgis.com/4.8/esri/css/main.css">
+    <script src="https://js.arcgis.com/4.8/"></script>
+
+    <script>
+    require([
+      "esri/WebScene",
+      "esri/views/SceneView",
+      "esri/widgets/DirectLineMeasurement3D",
+      "esri/widgets/AreaMeasurement3D",
+
+      "esri/widgets/Search",
+
+      "esri/Map",
+
+      "esri/widgets/CoordinateConversion",
+      "esri/widgets/CoordinateConversion/support/Format",
+      "esri/widgets/CoordinateConversion/support/Conversion",
+      "esri/geometry/Point",
+      "esri/geometry/support/webMercatorUtils",
+      "esri/geometry/SpatialReference",
+
+ "esri/views/MapView",
+      "esri/Graphic",
+
+      "dojo/domReady!"
+    ], function (
+      WebScene,
+      SceneView,
+      DirectLineMeasurement3D,
+      AreaMeasurement3D ,Search , Map, CoordinateConversion, Format, Conversion,
+      Point, webMercatorUtils, SpatialReference ,MapView, Graphic
+    ) {
+
+      var activeWidget = null;
+
+      // load a webscene
+      var webscene = new WebScene({
+           basemap: "hybrid"
+
+      });
+
+      // create the scene view
+      var view = new SceneView({
+          zoom: 5,
+  center:[31.353636941500987,  33.48632812500001],
+        container: "viewDiv",
+        map: webscene,
+      });
+
+
+
+
+
+
+ var ccWidget = new CoordinateConversion({
+        view: view
+      });
+
+      view.ui.add(ccWidget, "bottom-left");
+
+      // Regular expression to find a number
+      var numberSearchPattern = /-?\d+[\.]?\d*/;
+
+      /**
+       * Create a new Format called XYZ, which looks like: "<Latitude>, <Longitude>, <Z>"
+       *
+       * We need to define a convert function, a reverse convert function,
+       * and some formatting information.
+       */
+      var newFormat = new Format({
+        // The format's name should be unique with respect to other formats used by the widget
+        name: "XYZ",
+        conversionInfo: {
+          // Define a convert function
+          // Point -> Position
+          convert: function(point) {
+            var returnPoint = point.spatialReference.isWGS84 ? point :
+              webMercatorUtils.webMercatorToGeographic(point);
+            var x = returnPoint.x.toFixed(4);
+            var y = returnPoint.y.toFixed(4);
+            var z = returnPoint.z.toFixed(4);
+            return {
+              location: returnPoint,
+              coordinate: `${x}, ${y}, ${z}`
+            };
+          },
+          // Define a reverse convert function
+          // String -> Point
+          reverseConvert: function(string) {
+            var parts = string.split(",")
+            return new Point({
+              x: parseFloat(parts[0]),
+              y: parseFloat(parts[1]),
+              z: parseFloat(parts[2]),
+              spatialReference: {
+                wkid: 4326
+              }
+            });
+          }
+        },
+        // Define each segment of the coordinate
+        coordinateSegments: [
+        {
+          alias: "X",
+          description: "Longitude",
+          searchPattern: numberSearchPattern
+        },
+        {
+          alias: "Y",
+          description: "Latitude",
+          searchPattern: numberSearchPattern
+        },
+        {
+          alias: "Z",
+          description: "Elevation",
+          searchPattern: numberSearchPattern
+        }],
+        defaultPattern: "X°, Y°, Z"
+      });
+
+      // add our new format to the widget's dropdown
+      ccWidget.formats.add(newFormat);
+
+      /**
+       * Create a new Format 'SPS I', which looks like: "<X>, <Y>" in the
+       * California StatePlane Zone I Spatial Reference, described by wkid 102241
+       *
+       * For this Format, we only need to provide a spatialReference with the correct
+       * wkid. The geometry service can take care of the rest.
+       */
+      var stateplaneCA = new Format({
+        name: "SPS I",
+        conversionInfo: {
+          spatialReference: new SpatialReference({
+            wkid: 102241
+          }),
+          reverseConvert: function(string, format) {
+            var parts = string.split(",")
+            return new Point({
+              x: parseFloat(parts[0]),
+              y: parseFloat(parts[1]),
+              spatialReference: {
+                wkid: 102241
+              }
+            });
+          }
+        },
+        coordinateSegments: [
+        {
+          alias: "X",
+          description: "easting",
+          searchPattern: numberSearchPattern
+        },
+        {
+          alias: "Y",
+          description: "northing",
+          searchPattern: numberSearchPattern
+        }],
+        defaultPattern: "X, Y"
+      });
+
+      // Add our new format to the widget's dropdown
+      ccWidget.formats.add(stateplaneCA);
+
+      // Add the two custom formats to the top of the widget's display
+      ccWidget.conversions.splice(0, 0,
+        new Conversion({
+          format: newFormat
+        }),
+        new Conversion({
+          format: stateplaneCA
+        })
+      );
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+ // Add the search widget
+ var searchWidget = new Search({
+        view: view
+      });
+
+      // Add the search widget to the top right corner of the view
+      view.ui.add(searchWidget, {
+        position: "bottom-left"
+      });
+
+
+      // add the toolbar for the measurement widgets
+      view.ui.add("topbar", "bottom-left");
+
+      document.getElementById("distanceButton").addEventListener("click",
+        function () {
+          setActiveWidget(null);
+          if (!this.classList.contains('active')) {
+            setActiveWidget('distance');
+          } else {
+            setActiveButton(null);
+          }
+        });
+
+      document.getElementById("areaButton").addEventListener("click",
+        function () {
+          setActiveWidget(null);
+          if (!this.classList.contains('active')) {
+            setActiveWidget('area');
+          } else {
+            setActiveButton(null);
+          }
+        });
+
+      function setActiveWidget(type) {
+        switch (type) {
+          case "distance":
+            activeWidget = new DirectLineMeasurement3D({
+              view: view
+            });
+            view.ui.add(activeWidget, "top-right");
+            setActiveButton(document.getElementById('distanceButton'));
+            break;
+          case "area":
+            activeWidget = new AreaMeasurement3D({
+              view: view
+            });
+            view.ui.add(activeWidget, "top-right");
+            setActiveButton(document.getElementById('areaButton'));
+            break;
+          case null:
+            if (activeWidget) {
+              view.ui.remove(activeWidget);
+              activeWidget.destroy();
+              activeWidget = null;
+            }
+            break;
+        }
+      }
+
+      function setActiveButton(selectedButton) {
+        // focus the view to activate keyboard shortcuts for sketching
+        view.focus();
+        var elements = document.getElementsByClassName("active");
+        for (var i = 0; i < elements.length; i++) {
+          elements[i].classList.remove("active");
+        }
+        if (selectedButton) {
+          selectedButton.classList.add("active");
+        }
+      }
+
+
+
+
+
+
+
+
+      /*************************
+       * Create a point graphic
+       *************************/
+
+      // First create a point geometry (this is the location of the Titanic)
+      var point = {
+        type: "point", // autocasts as new Point()
+        longitude: 39.6423099,
+        latitude: 24.394495
+      };
+
+      // Create a symbol for drawing the point
+      var markerSymbol = {
+        type: "simple-marker", // autocasts as new SimpleMarkerSymbol()
+        color: [226, 119, 40],
+        outline: { // autocasts as new SimpleLineSymbol()
+          color: [255, 255, 255],
+          width: 2
+        }
+      };
+
+      // Create a graphic and add the geometry and symbol to it
+      var pointGraphic = new Graphic({
+        geometry: point,
+        symbol: markerSymbol
+      });
+
+      /****************************
+       * Create a polyline graphic
+       ****************************/
+
+      // First create a line geometry (this is the Keystone pipeline)
+      var polyline = {
+        type: "polyline", // autocasts as new Polyline()
+        paths: [
+          [39.6423099, 24.394495],
+          [39.6023099, 24.40495],
+          [39.6123099, 24.420495]
+        ]
+      };
+
+      // Create a symbol for drawing the line
+      var lineSymbol = {
+        type: "simple-line", // autocasts as SimpleLineSymbol()
+        color: [226, 119, 40],
+        width: 4
+      };
+
+      // Create an object for storing attributes related to the line
+      var lineAtt = {
+        Name: "Keystone Pipeline",
+        Owner: "TransCanada",
+        Length: "3,456 km"
+      };
+
+      /*******************************************
+       * Create a new graphic and add the geometry,
+       * symbol, and attributes to it. You may also
+       * add a simple PopupTemplate to the graphic.
+       * This allows users to view the graphic's
+       * attributes when it is clicked.
+       ******************************************/
+      var polylineGraphic = new Graphic({
+        geometry: polyline,
+        symbol: lineSymbol,
+        attributes: lineAtt,
+        popupTemplate: { // autocasts as new PopupTemplate()
+          title: "{Name}",
+          content: [{
+            type: "fields",
+            fieldInfos: [{
+              fieldName: "Name"
+            }, {
+              fieldName: "Owner"
+            }, {
+              fieldName: "Length"
+            }]
+          }]
+        }
+      });
+
+      /***************************
+       * Create a polygon graphic
+       ***************************/
+
+      // Create a polygon geometry
+      var polygon = {
+        type: "polygon", // autocasts as new Polygon()
+        rings: [
+
+
+           [39.7423099, 24.494495],
+          [39.6123099, 24.41495],
+          [39.6123099, 24.420495],
+            [39.7023099, 24.410495]
+        ]
+      };
+
+      // Create a symbol for rendering the graphic
+      var fillSymbol = {
+        type: "simple-fill", // autocasts as new SimpleFillSymbol()
+        color: [227, 139, 79, 0.8],
+        outline: { // autocasts as new SimpleLineSymbol()
+          color: [255, 255, 255],
+          width: 1
+        }
+      };
+
+      // Add the geometry and symbol to a new graphic
+      var polygonGraphic = new Graphic({
+        geometry: polygon,
+        symbol: fillSymbol
+      });
+
+      // Add the graphics to the view's graphics layer
+      view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
+
+
+
+
+
+
+
+
+
+
+
+
+
+    });
+
+    </script>
+</head>
+
+<body>
+    <div id="viewDiv"></div>
+    <div id="topbar">
+        <button class="action-button esri-icon-minus" id="distanceButton" type="button"
+                title="Measure distance between two points"></button>
+        <button class="action-button esri-icon-polygon" id="areaButton" type="button"
+                title="Measure area"></button>
+    </div>
+</body>
+
+</html>

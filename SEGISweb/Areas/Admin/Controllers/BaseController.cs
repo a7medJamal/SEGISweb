@@ -1,5 +1,4 @@
-﻿
-using SEGISweb.Common;
+﻿using SEGISweb.Common;
 using System;
 using System.Collections.Generic;
 using System.Linq;
