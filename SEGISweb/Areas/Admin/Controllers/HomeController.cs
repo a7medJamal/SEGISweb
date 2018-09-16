@@ -34,7 +34,14 @@ namespace SEGISweb.Areas.Admin.Controllers
                     markers += string.Format("'title': '{0}',", sdr["CityName"]);
                     markers += string.Format("'lat': '{0}',", sdr["Latitude"]);
                     markers += string.Format("'lng': '{0}',", sdr["Longitude"]);
-                    markers += string.Format("'description': '{0}'", sdr["Description"]);
+                    markers += string.Format("'description': '{0}',", sdr["Description"]);
+
+
+                    //markers += string.Format("'pipLat_1': '{0}',", sdr["PIPE_Latitude_1"]);
+                    //markers += string.Format("'pipLat_2': '{0}',", sdr["PIPE_Latitude_2"]);
+                    //markers += string.Format("'pipLng_1': '{0}',", sdr["PIPE_Longitude_1"]);
+                    //markers += string.Format("'pipLng_2': '{0}',", sdr["PIPE_Longitude_2"]);
+
                     markers += "},";
                 }
             }

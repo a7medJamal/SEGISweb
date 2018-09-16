@@ -16,13 +16,25 @@
     <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
     <title>Measurement in 3D - 4.8</title>
 
+
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/4.7.0/css/font-awesome.min.css">
+ @*   <script type="text/javascript" src="https://maps.googleapis.com/maps/api/js?key=API "></script>*@
+    <link href="~/Content/bootstrap.min.css" rel="stylesheet" />
+    <script src="~/scripts/jquery-3.3.1.min.js"></script>
+    <script src="~/scripts/bootstrap.min.js"></script>
+    <script src="~/scripts/jquery.validate.min.js"></script>
+    <script src="~/scripts/jquery.validate.unobtrusive.min.js"></script>
+
+
+
+
     <style>
         html,
         body,
         #viewDiv {
             padding: 0;
             margin: 0;
-            height: 100%;
+            height:100%;
             width: 100%;
         }
 
@@ -96,7 +108,7 @@
                 });
 
 
-              var markers = @Html.Raw(ViewBag.Markers);  
+              var markers = @Html.Raw(ViewBag.Markers);
                 // create the scene view
                 var view = new SceneView({
                     zoom: 5,
@@ -309,18 +321,18 @@
 
 
 
-         
+
 
 
                 /*************************
                  * Create a point graphic
                  *************************/
- 
+
                 // First create a point geometry (this is the location of the Titanic)
            for (var i = 0; i < markers.length; i++)
            {
-              
-                var data = markers[i] 
+
+                var data = markers[i]
                 var point = {
                     type: "point", // autocasts as new Point()
                     longitude: data.lng,
@@ -367,21 +379,26 @@
                         }]
                     }
                 });
-          
 
-           
+
+
 
                 /****************************
                  * Create a polyline graphic
                  ****************************/
 
+
                 // First create a line geometry (this is the Keystone pipeline)
                 var polyline = {
                     type: "polyline", // autocasts as new Polyline()
                     paths: [
-                        [39.6423099, 24.394495],
-                        [39.6023099, 24.40495],
-                        [39.6123099, 24.420495]
+
+                       //data.pipLng_1, data.pipLat_1,
+
+                       // data.pipLng_2, data.pipLat_2
+                        //[39.6423099, 24.394495],
+
+                        //[39.6123099, 24.420495]
                     ]
                 };
 
@@ -435,10 +452,10 @@
                     rings: [
 
 
-                        [39.7423099, 24.494495],
-                        [39.6123099, 24.41495],
-                        [39.6123099, 24.420495],
-                        [39.7023099, 24.410495]
+                        //[39.664706, 24.384684],
+                        //[39.652971, 24.396548],
+                        //[39.665612, 24.404479],
+                        //[39.679422, 24.387269]
                     ]
                 };
 
@@ -452,11 +469,48 @@
                     }
                 };
 
-                // Add the geometry and symbol to a new graphic
-                var polygonGraphic = new Graphic({
-                    geometry: polygon,
-                    symbol: fillSymbol
-                });
+
+
+               var polygonAtt = {
+                   Name: "Keystone ",
+                   Owner: "TransCanada",
+                   Length: "3,456 km"
+               };
+
+               /*******************************************
+                * Create a new graphic and add the geometry,
+                * symbol, and attributes to it. You may also
+                * add a simple PopupTemplate to the graphic.
+                * This allows users to view the graphic's
+                * attributes when it is clicked.
+                ******************************************/
+               var polygonGraphic = new Graphic({
+                   geometry: polygon,
+                   symbol: fillSymbol,
+                   attributes: polygonAtt,
+                   popupTemplate: { // autocasts as new PopupTemplate()
+                       title: "{Name}",
+                       content: [{
+                           type: "fields",
+                           fieldInfos: [{
+                               fieldName: "Name"
+                           }, {
+                               fieldName: "Owner"
+                           }, {
+                               fieldName: "Length"
+                           }]
+                       }]
+                   }
+               });
+
+
+
+
+
+
+
+
+
 
                 // Add the graphics to the view's graphics layer
                 view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
@@ -469,13 +523,91 @@
 </head>
 
 <body>
-    <div id="viewDiv"></div>
-    <div id="topbar">
-        <button class="action-button esri-icon-minus" id="distanceButton" type="button"
-                title="Measure distance between two points"></button>
-        <button class="action-button esri-icon-polygon" id="areaButton" type="button"
-                title="Measure area"></button>
-    </div>
-</body>
+   
+
+
+
+
+
+
+
+
+
+
+
+        @using (Html.BeginForm("Location", "Home", FormMethod.Post))
+        {
+            <div class="">
+                <h5 class="text-center"></h5>
+                <div class="card">
+                    <div class="">
+                      
+                    </div>
+                    <div class="">
+                        <button style="margin-bottom:10px;" type="button" data-target="#myMap" data-toggle="modal" class="btn btn-danger btn-sm rounded-0"><i class="fa fa-plus-circle"></i> Add New Location</button>
+
+                        <div class="modal fade" id="myMap">
+                            <div class="modal-dialog modal-lg">
+                                <div class="modal-content">
+                                    <div class="modal-header">
+                                        <h4 class="modal-title">Add New Location</h4>
+                                        <button type="button" class="close" data-dismiss="modal">×</button>
+                                    </div>
+                                    <div class="modal-body">
+                                        <div class="row">
+                                            <div class="col-sm-4 col-md-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>City Name:</label>
+                                                    @Html.EditorFor(model => model.CityName, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.CityName, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Latitude:</label>
+                                                    @Html.EditorFor(model => model.Latitude, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Latitude, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                            <div class="col-sm-4 col-md-4 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Longitude:</label>
+                                                    @Html.EditorFor(model => model.Longitude, new { htmlAttributes = new { @class = "form-control" } })
+                                                    @Html.ValidationMessageFor(model => model.Longitude, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                        <div class="row">
+                                            <div class="col-sm-12 col-md-12 col-xs-12">
+                                                <div class="form-group">
+                                                    <label>Description:</label>
+                                                    <textarea name="Description" rows="5" class="form-control"></textarea>
+                                                    @Html.ValidationMessageFor(model => model.Description, "", new { @class = "text-danger" })
+                                                </div>
+                                            </div>
+                                        </div>
+                                    </div>
+                                    <div class="modal-footer">
+                                        <button type="button" class="btn btn-danger rounded-0" data-dismiss="modal">Close</button>
+                                        <button class="btn btn-primary rounded-0">Submit</button>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div id="dvMap" class="card" style="width: 100%; height:900px">
+
+                            <div id="viewDiv"></div>
+                            <div id="topbar">
+                                <button class="action-button esri-icon-minus" id="distanceButton" type="button"
+                                        title="Measure distance between two points"></button>
+                                <button class="action-button esri-icon-polygon" id="areaButton" type="button"
+                                        title="Measure area"></button>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        }
+    </body>
 
 </html>

@@ -35,7 +35,7 @@ namespace SEGISweb.Controllers
                     usersession.UserName = user.UserName;
                     usersession.UserID = user.ID;
                     Session.Add(CommonConstants.User_Session, usersession);
-                    return RedirectToAction("Home", "Admin", "Index");
+                    return RedirectToAction("Home", "Admin", "Location");
                 }
                 else if (result == 0)
                 {

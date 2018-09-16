@@ -13,9 +13,14 @@ namespace SEGISweb.Models
         [Display(Name = "City Name")]
         public string CityName { get; set; }
         [Required(ErrorMessage = "Please enter city latitude")]
-        public double Latitude { get; set; }
+        public string Latitude { get; set; }
         [Required(ErrorMessage = "Please enter city longitude ")]
-        public double Longitude { get; set; }
+        public string Longitude { get; set; }
         public string Description { get; set; }
+
+        //public double PIPE_Latitude_1 { get; set; }
+        //public double PIPE_Longitude_1 { get; set; }
+        //public double PIPE_Latitude_2 { get; set; }
+        //public double PIPE_Longitude_2 { get; set; }
     }
 }
