@@ -1,14 +1,4 @@
-﻿@model SEGISweb.Models.Locations
-
-@{
-    ViewBag.Title = "Location";
-    Layout = null;
-
-}
-
-
-
-<!DOCTYPE html>
+﻿<!DOCTYPE html>
 <html>
 
 <head>
@@ -95,12 +85,10 @@
 
                 });
 
-
-              var markers = @Html.Raw(ViewBag.Markers);  
                 // create the scene view
                 var view = new SceneView({
                     zoom: 5,
-                    center: [markers[0].lng, markers[0].lat],
+                    center: [31.353636941500987, 33.48632812500001],
                     container: "viewDiv",
                     map: webscene,
                 });
@@ -233,6 +221,31 @@
 
 
 
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
                 // Add the search widget
                 var searchWidget = new Search({
                     view: view
@@ -309,22 +322,18 @@
 
 
 
-         
+
 
 
                 /*************************
                  * Create a point graphic
                  *************************/
- 
+
                 // First create a point geometry (this is the location of the Titanic)
-           for (var i = 0; i < markers.length; i++)
-           {
-              
-                var data = markers[i] 
                 var point = {
                     type: "point", // autocasts as new Point()
-                    longitude: data.lng,
-                    latitude: data.lat
+                    longitude: 39.6423099,
+                    latitude: 24.394495
                 };
 
                 // Create a symbol for drawing the point
@@ -337,39 +346,11 @@
                     }
                 };
 
-
-               var pointAtt = {
-                   Name: data.title,
-                   Owner: data.description,
-                   Length: "3,456 km",
-                   ["مساحه المبنى"]: "2555"
-               };
                 // Create a graphic and add the geometry and symbol to it
                 var pointGraphic = new Graphic({
                     geometry: point,
-                    symbol: markerSymbol ,
-                    attributes: pointAtt,
-                    popupTemplate: { // autocasts as new PopupTemplate()
-                        title: "{Name}",
-                        content: [{
-                            type: "fields",
-                            fieldInfos: [{
-                                fieldName: "Name"
-                            }, {
-                                fieldName: "Owner"
-                            }, {
-                                fieldName: "Length"
-                                },
-                                {
-                                    fieldName:"مساحه المبنى"
-                                }
-                            ]
-                        }]
-                    }
+                    symbol: markerSymbol
                 });
-          
-
-           
 
                 /****************************
                  * Create a polyline graphic
@@ -460,7 +441,7 @@
 
                 // Add the graphics to the view's graphics layer
                 view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
-           }
+
 
 
             });
