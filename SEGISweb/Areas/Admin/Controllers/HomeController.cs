@@ -37,10 +37,10 @@ namespace SEGISweb.Areas.Admin.Controllers
                     markers += string.Format("'description': '{0}',", sdr["Description"]);
 
 
-                    //markers += string.Format("'pipLat_1': '{0}',", sdr["PIPE_Latitude_1"]);
-                    //markers += string.Format("'pipLat_2': '{0}',", sdr["PIPE_Latitude_2"]);
-                    //markers += string.Format("'pipLng_1': '{0}',", sdr["PIPE_Longitude_1"]);
-                    //markers += string.Format("'pipLng_2': '{0}',", sdr["PIPE_Longitude_2"]);
+                    markers += string.Format("'pipLat1': '{0}',", sdr["PIPE_Latitude_1"]);
+                    markers += string.Format("'pipLat2': '{0}',", sdr["PIPE_Latitude_2"]);
+                    markers += string.Format("'pipLng1': '{0}',", sdr["PIPE_Longitude_1"]);
+                    markers += string.Format("'pipLng2': '{0}',", sdr["PIPE_Longitude_2"]);
 
                     markers += "},";
                 }

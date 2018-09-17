@@ -18,9 +18,9 @@ namespace SEGISweb.Models
         public string Longitude { get; set; }
         public string Description { get; set; }
 
-        //public double PIPE_Latitude_1 { get; set; }
-        //public double PIPE_Longitude_1 { get; set; }
-        //public double PIPE_Latitude_2 { get; set; }
-        //public double PIPE_Longitude_2 { get; set; }
+        public string PIPE_Latitude_1 { get; set; }
+        public string PIPE_Longitude_1 { get; set; }
+        public string PIPE_Latitude_2 { get; set; }
+        public string PIPE_Longitude_2 { get; set; }
     }
 }
