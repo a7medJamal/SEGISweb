@@ -67,14 +67,15 @@
 
             "esri/views/MapView",
             "esri/Graphic",
-
+            "esri/geometry/Point",
+            "esri/PopupTemplate",
             "dojo/domReady!"
         ], function (
             WebScene,
             SceneView,
             DirectLineMeasurement3D,
             AreaMeasurement3D, Search, Map, CoordinateConversion, Format, Conversion,
-            Point, webMercatorUtils, SpatialReference, MapView, Graphic
+            Point, webMercatorUtils, SpatialReference, MapView, Graphic, Point, PopupTemplate
         ) {
 
                 var activeWidget = null;
@@ -441,6 +442,96 @@
 
                 // Add the graphics to the view's graphics layer
                 view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
+
+
+
+
+
+
+
+                /**********************
+                      * Create a Text point graphic
+                      **********************/
+
+                // First create a point geometry
+                var point = new Point({
+                    longitude: 39.253099,
+                    latitude: 24.454495
+
+
+                });
+
+                // Create a symbol for drawing the point
+                var textSymbol = {
+                    type: "text", // autocasts as new TextSymbol()
+                    color: "#7A003C",
+                    text: "Text FOR Point", // esri-icon-map-pin
+                    font: { // autocasts as new Font()
+                        size: 30,
+                        family: "CalciteWebCoreIcons"
+                    }
+                };
+
+                // Create a graphic and add the geometry and symbol to it
+                var pointGraphic = new Graphic({
+                    geometry: point,
+                    symbol: textSymbol
+                });
+
+                // Add the graphics to the view's graphics layer
+                view.graphics.add(pointGraphic);
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+                /**********************
+                 * Create a Text Line graphic
+                 **********************/
+
+                // First create a point geometry
+                var LineText = new Point({
+                    longitude: 39.6423099,
+                    latitude: 24.394495
+
+
+                });
+
+                // Create a symbol for drawing the point
+                var textSymbol = {
+                    type: "text", // autocasts as new TextSymbol()
+                    color: "#7A003C",
+                    text: "Text fot Line", // esri-icon-map-pin
+                    font: { // autocasts as new Font()
+                        size: 30,
+                        family: "CalciteWebCoreIcons"
+                    }
+                };
+
+                // Create a graphic and add the geometry and symbol to it
+                var LineGraphic = new Graphic({
+                    geometry: LineText,
+                    symbol: textSymbol
+                });
+
+                // Add the graphics to the view's graphics layer
+                view.graphics.add(LineGraphic);
+
+
+
+
+
+
+
 
 
 

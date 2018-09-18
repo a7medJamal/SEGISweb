@@ -34,9 +34,13 @@
             "esri/widgets/Search",
             "esri/layers/KMLLayer",
             "esri/widgets/ScaleBar",
+
+            "esri/geometry/Point",
+            "esri/PopupTemplate",
+
             "dojo/domReady!"
         ], function (
-            Map, MapView, Graphic, BasemapToggle, CoordinateConversion, Print, WebMap, Locate, SceneView, Search, KMLLayer, ScaleBar
+            Map, MapView, Graphic, BasemapToggle, CoordinateConversion, Print, WebMap, Locate, SceneView, Search, KMLLayer, ScaleBar, Point, PopupTemplate
         ) {
 
                 var layer = new KMLLayer({
@@ -242,6 +246,116 @@
 
                 // Add the graphics to the view's graphics layer
                 view.graphics.addMany([pointGraphic, polylineGraphic, polygonGraphic]);
+
+
+
+
+
+
+
+
+
+
+                var pictureGraphic = new Graphic({
+                    geometry: {
+                        type: "point",
+                        x: -118.31,
+                        y: 34.182
+                    },
+                    symbol: {
+                        type: "picture-marker",
+                        url: "https://developers.arcgis.com/labs/images/bluepin.png",
+                        width: "25px",
+                        height: "50px"
+                    }
+                });
+
+                view.graphics.add(pictureGraphic);
+
+
+
+
+                /**********************
+                * Create a Text point graphic
+                **********************/
+
+                // First create a point geometry
+                var point = new Point({
+                    longitude: -49.97,
+                    latitude: 41.73
+
+                });
+
+                // Create a symbol for drawing the point
+                var textSymbol = {
+                    type: "text", // autocasts as new TextSymbol()
+                    color: "#7A003C",
+                    text: "mapsssss", // esri-icon-map-pin
+                    font: { // autocasts as new Font()
+                        size: 30,
+                        family: "CalciteWebCoreIcons"
+                    }
+                };
+
+                // Create a graphic and add the geometry and symbol to it
+                var pointGraphic = new Graphic({
+                    geometry: point,
+                    symbol: textSymbol
+                });
+
+                // Add the graphics to the view's graphics layer
+                view.graphics.add(pointGraphic);
+
+
+
+
+
+
+
+
+
+
+                /**********************
+                      * Create a Text Line graphic
+                      **********************/
+
+                // First create a point geometry
+                var LineText = new Point({
+                    longitude: -60.97,
+                    latitude: 51.73
+
+                });
+
+                // Create a symbol for drawing the point
+                var textSymbol = {
+                    type: "text", // autocasts as new TextSymbol()
+                    color: "#7A003C",
+                    text: "ahmedmap", // esri-icon-map-pin
+                    font: { // autocasts as new Font()
+                        size: 30,
+                        family: "CalciteWebCoreIcons"
+                    }
+                };
+
+                // Create a graphic and add the geometry and symbol to it
+                var LineGraphic = new Graphic({
+                    geometry: LineText,
+                    symbol: textSymbol
+                });
+
+                // Add the graphics to the view's graphics layer
+                view.graphics.add(LineGraphic);
+
+
+
+
+
+
+
+
+
+
+
             });
     </script>
 </head>
