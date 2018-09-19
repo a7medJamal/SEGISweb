@@ -2,11 +2,9 @@
 <html>
 <head>
     <meta charset="utf-8">
-    <meta name="viewport" content="initial-scale=1,maximum-scale=1,user-scalable=no">
-    <title>Intro to graphics - 4.8</title>
-
+    <meta name="viewport" content="initial-scale=1, maximum-scale=1,user-scalable=no">
+    <title>Print widget - 4.8</title>
     <link rel="stylesheet" href="https://js.arcgis.com/4.8/esri/css/main.css">
-    <script src="https://js.arcgis.com/4.8/"></script>
 
     <style>
         html,
@@ -20,84 +18,33 @@
         }
     </style>
 
+    <script src="https://js.arcgis.com/4.8/"></script>
     <script>
         require([
-            "esri/Map",
             "esri/views/MapView",
-            "esri/Graphic",
-            "esri/widgets/BasemapToggle",
-            "esri/widgets/CoordinateConversion",
             "esri/widgets/Print",
             "esri/WebMap",
-            "esri/widgets/Locate",
-            "esri/views/SceneView",
-            "esri/widgets/Search",
-            "esri/layers/KMLLayer",
-            "esri/widgets/ScaleBar",
-
+            "esri/Graphic",
             "esri/geometry/Point",
-            "esri/PopupTemplate",
+            "esri/widgets/Search",
+            "esri/widgets/CoordinateConversion",
+            "esri/Map",
 
             "dojo/domReady!"
-        ], function (
-            Map, MapView, Graphic, BasemapToggle, CoordinateConversion, Print, WebMap, Locate, SceneView, Search, KMLLayer, ScaleBar, Point, PopupTemplate
-        ) {
+        ],
+            function (
+                MapView, Print, WebMap, Graphic, Point, Search, CoordinateConversion, map
+            ) {
 
-                var layer = new KMLLayer({
-                    url: "http://quickmap.dot.ca.gov/data/lcs.kml" // lane closures from California Dept of Transportation
-                });
-                // Create the Map with an initial basemap
-                var map = new Map({
+                var webmap = new WebMap({
                     basemap: "satellite",
-                    ground: "world-elevation",
-                    layers: [layer]
-                });
+                    ground: "world-elevation"
 
-                // Create the MapView and reference the Map in the instance
+                });
 
                 var view = new MapView({
-                    center: [24.703197, 46.683269],
                     container: "viewDiv",
-                    map: map,
-                    zoom: 3
-                });
-
-
-
-                var scalebar = new ScaleBar({
-                    view: view
-                });
-                view.ui.add(scalebar, "bottom-left");
-
-                //this for search for world map
-                // var view = new SceneView({
-                //       scale: 123456789,
-                //       container: "viewDiv",
-                //       map: map
-                //     });
-
-                var searchWidget = new Search({
-                    view: view
-                });
-
-                // Add the search widget to the top right corner of the view
-                view.ui.add(searchWidget, {
-                    position: "top-right"
-                });
-                //this for location
-                var locateBtn = new Locate({
-                    view: view
-                });
-
-                view.ui.add(locateBtn, {
-                    position: "top-left"
-                });
-
-                // this for print map
-                var webmap = new WebMap({
-                    portalItem: { // autocasts as new PortalItem()
-                        id: "d6d830a7184f4971b8a2f42cd774d9a7"
-                    }
+                    map: webmap
                 });
 
                 view.when(function () {
@@ -112,24 +59,21 @@
                 });
 
 
-                //this for cordunate widget
+
                 var ccWidget = new CoordinateConversion({
                     view: view
                 });
 
                 view.ui.add(ccWidget, "bottom-left");
 
-                //this for alot of base map widget
-                // 1 - Create the widget
-                var toggle = new BasemapToggle({
-                    // 2 - Set properties
-                    view: view, // view that provides access to the map's 'topo' basemap
-                    nextBasemap: "hybrid" // allows for toggling to the 'hybrid' basemap
 
-                });
 
-                // Add widget to the top right corner of the view
-                view.ui.add(toggle, "top-right");
+
+
+
+
+
+
 
 
                 /*************************
@@ -251,30 +195,6 @@
 
 
 
-
-
-
-
-
-                var pictureGraphic = new Graphic({
-                    geometry: {
-                        type: "point",
-                        x: -118.31,
-                        y: 34.182
-                    },
-                    symbol: {
-                        type: "picture-marker",
-                        url: "https://developers.arcgis.com/labs/images/bluepin.png",
-                        width: "25px",
-                        height: "50px"
-                    }
-                });
-
-                view.graphics.add(pictureGraphic);
-
-
-
-
                 /**********************
                 * Create a Text point graphic
                 **********************/
@@ -348,8 +268,51 @@
 
 
 
+                var searchWidget = new Search({
+                    view: view,
+                    allPlaceholder: "District or Senator",
+                    sources: [{
+                        featureLayer: {
+                            url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/CongressionalDistricts/FeatureServer/0",
+                            popupTemplate: { // autocasts as new PopupTemplate()
+                                title: "Congressional District {DISTRICTID} </br>{NAME}, {PARTY}",
+                                overwriteActions: true
+                            }
+                        },
+                        searchFields: ["DISTRICTID"],
+                        displayField: "DISTRICTID",
+                        exactMatch: false,
+                        outFields: ["DISTRICTID", "NAME", "PARTY"],
+                        name: "Congressional Districts",
+                        placeholder: "example: 3708",
+                    }, {
+                        featureLayer: {
+                            url: "https://services.arcgis.com/V6ZHFr6zdgNZuVG0/arcgis/rest/services/US_Senators/FeatureServer/0",
+                            popupTemplate: { // autocasts as new PopupTemplate()
+                                title: "<a href={Web_Page} target='_blank'> {Name}</a>, ({Party}-{State}) ",
+                                overwriteActions: true
+                            }
+                        },
+                        searchFields: ["Name", "Party"],
+                        suggestionTemplate: "{Name}, Party: {Party}",
+                        exactMatch: false,
+                        outFields: ["*"],
+                        placeholder: "example: Casey",
+                        name: "Senators",
+                        zoomScale: 500000,
+                        resultSymbol: {
+                            type: "picture-marker", // autocasts as new PictureMarkerSymbol()
+                            url: "images/senate.png",
+                            height: 36,
+                            width: 36
+                        }
+                    }]
+                });
 
-
+                // Add the search widget to the top left corner of the view
+                view.ui.add(searchWidget, {
+                    position: "top-right"
+                });
 
 
 
@@ -360,8 +323,7 @@
     </script>
 </head>
 
-<body>
+<body class="calcite">
     <div id="viewDiv"></div>
 </body>
-
 </html>
